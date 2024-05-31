@@ -4,16 +4,50 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
+import webcrea.app.pharmacy.DTO.AddMedicationDTO
 import webcrea.app.pharmacy.DTO.MedicationsDTO
 import webcrea.app.pharmacy.entity.Inventory
 import webcrea.app.pharmacy.entity.Medication
+import webcrea.app.pharmacy.exception.MedicationExceptionExist
 import webcrea.app.pharmacy.repository.InventoryRepository
 import webcrea.app.pharmacy.repository.MedicationRepository
+import webcrea.app.pharmacy.repository.SupplierRepository
 import java.time.LocalDateTime
 
 @Service
-class MedicationService(private val medicationRepository: MedicationRepository, private val inventoryRepository: InventoryRepository): MainService<Medication,Long>(medicationRepository) {
+class MedicationService(private val medicationRepository: MedicationRepository,private val supplierService: SupplierService,
+                        private val supplyService: SupplyService,private val inventoryRepository: InventoryRepository): MainService<Medication,Long>(medicationRepository) {
 
+
+    override fun saveData(data: Medication): Mono<Medication> {
+        return medicationRepository.findByReference(data.reference!!)
+            .flatMap<Medication> {
+                Mono.error(MedicationExceptionExist(data.reference!!))
+            }
+            .switchIfEmpty(
+                super.saveData(data)
+            )
+    }
+
+    fun addMedicationDTO(addMedicationDTO: AddMedicationDTO): Mono<AddMedicationDTO> {
+        return medicationRepository.save(addMedicationDTO.medication)
+            .flatMap { savedMedication ->
+                supplierService.saveData(addMedicationDTO.supplier.copy())
+                    .flatMap { savedSupplier ->
+                        val supplyToSave = addMedicationDTO.supply.copy(
+                            medicationId = savedMedication.id!!,
+                            supplierId = savedSupplier.id!!
+                        )
+                        supplyService.saveData(supplyToSave).map { savedSupply ->
+                            AddMedicationDTO(
+                                medication = savedMedication,
+                                supplier = savedSupplier,
+                                supply = savedSupply
+                            )
+                        }
+                    }
+            }
+    }
 
     fun getAllDataDTO(): Flux<MedicationsDTO> {
         return medicationRepository.findAll()

@@ -18,10 +18,16 @@ const navbar = [
                 href: "/medications",
             },
             {
-                title: "Add a medication",
+                title: "Add a Medication",
                 href: "/medications/add",
             }
         ]
+    },
+    {
+        title: "Inventory",
+        href: "inventory",
+        icon: "mdi mdi-package",
+        subMenu: []
     },
     {
         title: "Orders",
@@ -41,8 +47,12 @@ const navbar = [
     {
         title: "Suppliers",
         href: null,
-        icon: "mdi mdi-cart",
+        icon: "mdi mdi-package",
         subMenu: [
+            {
+                title: "Suppliers List",
+                href: "/suppliers",
+            },
             {
                 title: "Supplies list",
                 href: "/orders",

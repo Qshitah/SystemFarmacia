@@ -4,17 +4,17 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { deleteMedicationAsync, fetchMedicationsAsync } from "../../redux/MedicationSlice";
-
-export default function MedicationsList() {
-  const dispatch = useDispatch();
+import {  } from "../../redux/inventorylice";
+import { fetchMedicationsInventoryAsync } from "../../redux/MedicationSlice";
+export default function Inventory() {
+    const dispatch = useDispatch();
   const [filter, setFilter] = useState({
     start: 0,
     end: 15,
     page: 1,
     step: 15,
   });
-  const { medications, statusMedications, errorMedications } = useSelector(
+  const { inventory, statusMedications, errorMedications } = useSelector(
     (state) => state.medications
   );
 
@@ -24,14 +24,11 @@ export default function MedicationsList() {
   });
 
   useEffect(() => {
-    if (statusMedications === "failed") {
+    if (statusMedications === "failed-inventory") {
       console.log(errorMedications);
-    }else if (statusMedications !== "succeeded") {
-        dispatch(fetchMedicationsAsync());
-      }  
-    else if (statusMedications === "failed-deleteting") {
-      alert(errorMedications);
-    }
+    }else if (statusMedications !== "succeeded-inventory") {
+        dispatch(fetchMedicationsInventoryAsync());
+    }  
   }, [
     dispatch,
     errorMedications,
@@ -63,7 +60,7 @@ export default function MedicationsList() {
         <div className="content">
           <div className="breadcrumb-wrapper d-flex align-items-center justify-content-between">
             <div>
-              <h1>Medication</h1>
+              <h1>Inventory</h1>
               <p className="breadcrumbs">
                 <span>
                   <Link to={"/"}>Accueil</Link>
@@ -71,7 +68,7 @@ export default function MedicationsList() {
                 <span>
                   <i className="mdi mdi-chevron-right"></i>
                 </span>
-                Medication
+                Inventory
               </p>
             </div>
             <div style={{ display: "flex", gap: "10px" }}>
@@ -110,19 +107,20 @@ export default function MedicationsList() {
                         <tr>
                           <th>Nom</th>
                           <th>Référence</th>
-                          <th>Prix</th>
-                          <th>Dosage</th>
-                          <th>ExpiresAt</th>
-                          <th>Créé à</th>
-                          <th>Action</th>
+                          <th>Quantité</th>
                         </tr>
                         
                       </thead>
 
                       <tbody>
-                        {medications.length > 0 &&
-                          medications
+                        {inventory.length > 0 &&
+                          inventory
                             .slice(filter.start, filter.end)
+                            .sort((a, b) => {
+                              return (
+                                new Date(b.data.createdAt) - new Date(a.data.createdAt)
+                              );
+                            })
                             .filter((medication) => {
                               // Initialize variables to store the results of the search for name and reference
                               let matchName = true;
@@ -130,14 +128,14 @@ export default function MedicationsList() {
 
                               // Check if searchTerm.name is not empty and the medication name includes the search term
                               if (searchTerm.name.trim() !== "") {
-                                matchName = medication.name
+                                matchName = medication.data.name
                                   .toLowerCase()
                                   .includes(searchTerm.name.toLowerCase());
                               }
 
                               // Check if searchTerm.reference is not empty and the medication reference includes the search term
                               if (searchTerm.reference.trim() !== "") {
-                                matchReference = medication.reference
+                                matchReference = medication.data.reference
                                   .toLowerCase()
                                   .includes(searchTerm.reference.toLowerCase());
                               }
@@ -146,32 +144,10 @@ export default function MedicationsList() {
                               return matchName && matchReference;
                             })
                             .map((medication) => (
-                              <tr key={medication.id}>
-                                <td>{medication.name}</td>
-                                <td>{medication.reference}</td>
-                                <td>{medication.price}Dh</td>
-                                <td>{medication.dosage}</td>
-                                <td>{medication.expiresAt === null ? "-" : getDate(medication.expiresAt) }</td>
-                                <td>
-                                  {medication.createdAt === null
-                                    ? getDate(new Date())
-                                    : getDate(medication.createdAt)}
-                                </td>
-                                <td>
-                                  <div className="btn-group mb-1">
-                                      <Link to={`/medications/edit/${medication.id}`} className="btn btn-primary" >
-                                        Modifier
-                                      </Link>
-                                      <Link onClick={(e) => {
-                                        e.preventDefault();
-                                        if(window.confirm("Voulez-vous vraiment supprimer cette medication ?")){
-                                          dispatch(deleteMedicationAsync(medication.id));
-                                        };
-                                      }} className="btn btn-danger" >
-                                        Supprimer
-                                      </Link>
-                                  </div>
-                                </td>
+                              <tr key={medication.data.id}>
+                                <td>{medication.data.name}</td>
+                                <td>{medication.data.reference}</td>
+                                <td style={{color: medication.inventory.quantity <= 20? "red" : "green"}}>{medication.inventory.quantity}</td>
                               </tr>
                             ))}
                       </tbody>
@@ -184,7 +160,7 @@ export default function MedicationsList() {
                         gap: "10px",
                       }}
                     >
-                      {medications.length > 0 &&
+                      {inventory.length > 0 &&
                         (<nav aria-label="...">
                         <ul className="pagination">
                           <li className="page-item ">
@@ -206,9 +182,9 @@ export default function MedicationsList() {
                             }}>Précédent</a>
                           </li>
                           <li className="page-item">
-                            <a className="page-link " style={{color: filter.page === Math.ceil(medications.length / filter.step) ? "gray" : "#34c997"}} onClick={(e) => {
+                            <a className="page-link " style={{color: filter.page === Math.ceil(inventory.length / filter.step) ? "gray" : "#34c997"}} onClick={(e) => {
                               e.preventDefault();
-                              if(filter.page < Math.ceil(medications.length / filter.step) ){
+                              if(filter.page < Math.ceil(inventory.length / filter.step) ){
                                 setFilter({
                                   ...filter,
                                   start:
@@ -235,5 +211,5 @@ export default function MedicationsList() {
         </div>
       </div>
     </React.Fragment>
-  );
+  )
 }

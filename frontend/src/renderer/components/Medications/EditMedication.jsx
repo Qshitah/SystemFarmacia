@@ -1,17 +1,20 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { addMedicationAsync } from '../../redux/MedicationSlice';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { updateMedicationAsync } from '../../redux/MedicationSlice';
+import { set } from '../../../../assets/scss/bootstrap/js/dist/dom/data';
 
-export default function AddMedication() {
-	const dispatch = useDispatch();
-	const navigate = useNavigate();
+export default function EditMedication() {
 
-	const {statusMedications, errorMedications} = useSelector((state) => state.medications);
+    const {id} = useParams();
+    const dispatch = useDispatch();
 
+    const navigate = useNavigate();
 
-	const [formData,setFormData] = useState({
+    const {statusMedications, errorMedications} = useSelector((state) => state.medications);
+
+    const [formData,setFormData] = useState({
 		medication:{
 			name: "",
 			reference: "",
@@ -27,6 +30,21 @@ export default function AddMedication() {
 		message: "",
 	});
 
+    useEffect(() => {
+        const fetchMedication = async() => {
+            axios.get(`http://localhost:8080/api/medications/${id}`)
+            .then((response) => {
+                setFormData({
+                    medication: response.data
+                });
+            }).catch((error) => {
+                console.log(error);
+                window.electron.ipcRenderer.sendMessage('ipc-example', ['Error fetching medications data']);
+            });
+        }
+        fetchMedication();
+    },[id]);
+
 	const handleMedicationChange = (e) => {
 		const {name,value} = e.target;
 		setFormData({
@@ -36,28 +54,6 @@ export default function AddMedication() {
 				[name]: name === price  ? parseFloat(value) : value
 			}
 		})
-	};
-
-	const handleSupplierChange = (e) => {
-		const {name,value} = e.target;
-		if(name === "quantity" || name === "cost"){
-			setFormData({
-				...formData,
-				supply:{
-					...formData.supply,
-					[name]: name === "quantity" ? parseInt(value) : parseFloat(value)
-				}
-			})
-		}else {
-			setFormData({
-				...formData,
-				supplier:{
-					...formData.supplier,
-					[name]:value
-				}
-			})
-		}
-		
 	};
 
 	const handleSubmit = async(e) => {
@@ -88,28 +84,26 @@ export default function AddMedication() {
 			})
 		};
 
-		const data = {...formData.medication};
+        const data = {...formData.medication,id:id};
 
-		dispatch(addMedicationAsync(data))
-			.then(() => {
-				if(statusMedications === "failed-adding"){
-					setError({
-						name:"error",
-						message: errorMedications,
-					})
-				}else{
-					navigate("/medications")
-
-				}
-			});
+		dispatch(updateMedicationAsync(data))
+            .then(() => {
+                if(statusMedications === "failed-updating"){
+                    setError({
+                        name:"error",
+                        message: errorMedications
+                    })
+                }else{
+                    navigate("/medications");
+                }
+            })
 	}
-
   return (
     <div className="ec-content-wrapper">
 				<div className="content">
 					<div className="breadcrumb-wrapper d-flex align-items-center justify-content-between">
 						<div>
-							<h1>Add Medication</h1>
+							<h1>Edit Medication</h1>
 							<p className="breadcrumbs"><span><Link to={"/"}>Home</Link></span>
 								<span><i className="mdi mdi-chevron-right"></i></span>Product</p>
 						</div>
@@ -122,7 +116,7 @@ export default function AddMedication() {
 						<div className="col-12">
 							<div className="card card-default">
 								<div className="card-header card-header-border-bottom">
-									<h2>Add Medication</h2>
+									<h2>Edit Medication</h2>
 								</div>
 
 								<div className="card-body">
