@@ -8,7 +8,7 @@ import SupplySlice from "./SupplySlice";
 const reducer = combineReducers({
     medications: MedicationSlice,
     suppliers: SupplierSlice,
-    orders:OrderSlice
+    orders:OrderSlice,
     supplies: SupplySlice
 })
 

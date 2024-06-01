@@ -12,6 +12,7 @@ import Inventory from './components/Inventory/Inventory';
 import Suppliers from './components/Suppliers/Suppliers';
 import AddSupplies from './components/Suppliers/AddSupplies';
 import AllOrder from './components/Orders/AllOrders';
+import AddOrder from './components/Orders/AddOrder';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -38,6 +39,13 @@ export default function App() {
               <Route path="medications/edit/:id" element={<EditMedication />} key="edit-medication" />
               <Route path='inventory' element={<Inventory />} key="inventory" />
               <Route path='suppliers' element={<Suppliers />} key="suppliers" />
+              <Route path='suppliers/add' element={<AddSupplies />} key="suppliers/add" />
+              <Route path='orders' element={<AllOrder />} key="orders" />
+              <Route path='orders/add' element={<AddOrder />} key="orders/add" />
+
+
+
+
             </Route>
           </Routes>
         </Router>
