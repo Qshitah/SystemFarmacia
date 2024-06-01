@@ -12,6 +12,6 @@ data class Supply(
     var medicationId: Long,
     var quantity: Int?,
     var cost: Double?,
-    val suppliedAt: LocalDateTime = LocalDateTime.now(),
+    val suppliedAt: LocalDateTime? = LocalDateTime.now(),
     var updatedAt: LocalDateTime ?= LocalDateTime.now()
 )

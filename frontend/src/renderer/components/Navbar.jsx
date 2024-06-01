@@ -59,7 +59,7 @@ const navbar = [
             },
             {
                 title: "Add a supplies",
-                href: "/orders/add",
+                href: "/suppliers/add",
             }
         ]
     }

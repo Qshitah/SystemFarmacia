@@ -60,7 +60,7 @@ export default function Suppliers() {
       <div className="content">
         <div className="breadcrumb-wrapper d-flex align-items-center justify-content-between">
           <div>
-            <h1>Inventory</h1>
+            <h1>Suppliers</h1>
             <p className="breadcrumbs">
               <span>
                 <Link to={"/"}>Accueil</Link>
