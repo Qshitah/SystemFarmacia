@@ -18,9 +18,4 @@ class MedicationController(private val medicationService: MedicationService): Ma
         return medicationService.getAllDataDTO()
     }
 
-    @PostMapping("/withSupplier")
-    fun saveDataWithSupplier(@RequestBody data: AddMedicationDTO): Mono<AddMedicationDTO> {
-        return  medicationService.addMedicationDTO(data)
-    }
-
 }

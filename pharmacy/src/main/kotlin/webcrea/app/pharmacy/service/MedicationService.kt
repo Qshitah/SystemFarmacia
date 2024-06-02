@@ -15,8 +15,7 @@ import webcrea.app.pharmacy.repository.SupplierRepository
 import java.time.LocalDateTime
 
 @Service
-class MedicationService(private val medicationRepository: MedicationRepository,private val supplierService: SupplierService,
-                        private val supplyService: SupplyService,private val inventoryRepository: InventoryRepository): MainService<Medication,Long>(medicationRepository) {
+class MedicationService(private val medicationRepository: MedicationRepository,private val inventoryRepository: InventoryRepository): MainService<Medication,Long>(medicationRepository) {
 
 
     override fun saveData(data: Medication): Mono<Medication> {
@@ -29,25 +28,6 @@ class MedicationService(private val medicationRepository: MedicationRepository,p
             )
     }
 
-    fun addMedicationDTO(addMedicationDTO: AddMedicationDTO): Mono<AddMedicationDTO> {
-        return medicationRepository.save(addMedicationDTO.medication)
-            .flatMap { savedMedication ->
-                supplierService.saveData(addMedicationDTO.supplier.copy())
-                    .flatMap { savedSupplier ->
-                        val supplyToSave = addMedicationDTO.supply.copy(
-                            medicationId = savedMedication.id!!,
-                            supplierId = savedSupplier.id!!
-                        )
-                        supplyService.saveData(supplyToSave).map { savedSupply ->
-                            AddMedicationDTO(
-                                medication = savedMedication,
-                                supplier = savedSupplier,
-                                supply = savedSupply
-                            )
-                        }
-                    }
-            }
-    }
 
     fun getAllDataDTO(): Flux<MedicationsDTO> {
         return medicationRepository.findAll()
