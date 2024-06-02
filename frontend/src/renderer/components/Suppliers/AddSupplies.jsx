@@ -112,7 +112,7 @@ export default function AddSupplies() {
         })
         .catch((error) => {
             setError({
-                name: 'supply',
+                error: 'supply',
                 message: 'Error adding supplies',
             })
         });
@@ -123,40 +123,47 @@ export default function AddSupplies() {
 
     if (formData.length === 0) {
       return setError({
-        name: 'supply',
+        error: 'supply',
         message: 'Please add at least one supply',
       });
     }
 
     if (supplierInfo.name === '') {
       return setError({
-        name: 'name',
+        error: 'name',
         message: 'Please enter name of a supplier',
       });
     }
 
+    var error = null;
+
     formData.map((supply, index) => {
       if (supply.quantity <= 0) {
-        return setError({
-          name: 'supply',
+        error =  ({
+            error: 'supply',
           message: 'Quantity must be greater than 0',
         });
       }
 
       if (supply.cost <= 0) {
-        return setError({
-          name: 'supply',
+        error =  ({
+         error: 'supply',
           message: 'Cost must be greater than 0',
         });
       }
 
       if (supply.cost > selectedSuggestions[index].price) {
-        return setError({
-          name: 'supply',
+        error =  ({
+          error: 'supply',
           message: 'Cost must be less than or equal to supplier price',
         });
       }
     });
+
+    if(error !== null){
+        return setError(error);
+    }
+
 
     if (selectSuppliers === '') {
       dispatch(addSupplierAsync(supplierInfo))
@@ -166,7 +173,7 @@ export default function AddSupplies() {
         })
         .catch((error) => {
           return setError({
-            name: 'supply',
+            error: 'supply',
             message: 'Failed to add supplier',
           });
         });

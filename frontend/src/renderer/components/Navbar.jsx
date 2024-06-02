@@ -55,7 +55,7 @@ const navbar = [
             },
             {
                 title: "Supplies list",
-                href: "/orders",
+                href: "/supplies",
             },
             {
                 title: "Add a supplies",
