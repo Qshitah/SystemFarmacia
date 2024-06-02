@@ -6,7 +6,8 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Table("order_items")
-data class OrderItem(
+data class
+OrderItem(
     @Id
     val id: Long? = null,
     val orderId: Long,

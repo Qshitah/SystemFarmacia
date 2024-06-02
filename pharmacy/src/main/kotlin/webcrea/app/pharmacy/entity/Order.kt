@@ -14,6 +14,6 @@ data class Order(
     var clientPhone: String?,
     var clientEmail: String?,
     var totalAmount: BigDecimal?,
-    var status: String = "PENDING",
+    var status: String? = "PENDING",
     val createdAt: LocalDateTime = LocalDateTime.now()
 )
