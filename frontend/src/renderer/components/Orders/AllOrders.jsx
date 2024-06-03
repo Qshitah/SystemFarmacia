@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { fetchOrdersAsync } from "../../redux/OrderSlice";
+import { deleteOrderAsync, fetchOrdersAsync } from "../../redux/OrderSlice";
+import { fetchMedicationsInventoryAsync } from "../../redux/MedicationSlice";
 
 export default function AllOrder() {
   const dispatch = useDispatch();
@@ -15,6 +16,10 @@ export default function AllOrder() {
   const { orders, statusOrders, errorOrders } = useSelector(
     (state) => state.orders
   );
+
+  const [searchTerm, setSearchTerm] = useState({
+    date: "",
+  });
 
   useEffect(() => {
     if (statusOrders !== "succeeded") {
@@ -68,7 +73,16 @@ export default function AllOrder() {
                 Commandes
               </p>
             </div>
-
+            <div style={{ display: "flex", gap: "10px" }}>
+              <input
+                type="date"
+                className="form-control"
+                value={searchTerm.date}
+                onChange={(e) =>
+                  setSearchTerm({ ...searchTerm, date: e.target.value })
+                }
+              />
+            </div>
           </div>
           <div className="row">
             <div className="col-12">
@@ -85,6 +99,7 @@ export default function AllOrder() {
                           <th>ID</th>
                           <th>Nom complet</th>
                           <th>Numéro de téléphone</th>
+                          <th>Total Amount</th>
                           <th>Statut</th>
                           <th>Date</th>
                           <th>Action</th>
@@ -96,19 +111,31 @@ export default function AllOrder() {
                         {orders.length > 0 &&
                           orders
                             .slice(filter.start, filter.end)
+                            .filter((order) => {
+                              if (searchTerm.date === "") {
+                                return order;
+                              } else if (
+                                order.createdAt
+                                  .toLowerCase()
+                                  .includes(searchTerm.date.toLowerCase())
+                              ) {
+                                return order;
+                              }
+                            })
                             .map((order) => (
-                              <tr key={order.orderId}>
-                                <td>{order.orderId}</td>
+                              <tr key={order.id}>
+                                <td>{order.id}</td>
                                 <td>
-                                  {order.fullName}
+                                  {order.clientName === "" ? "-" : order.clientName}
                                   <br />
-                                  <strong>{order.email}</strong>
+                                  <strong>{order.clientEmail}</strong>
                                 </td>
 
-                                <td>{order.phoneNumber}</td>
+                                <td>{order.clientPhone === "" ? "-" : order.clientPhone}</td>
+                                <td>{order.totalAmount} Dh</td>
                                 <td>
                                   <span
-                                    className={`badge ${order.status === "CONFIRM"
+                                    className={`badge ${order.status.toUpperCase() === "CONFIRMED"
                                       ? "bg-success"
                                       : order.status === "WAIT"
                                         ? "bg-warning"
@@ -120,36 +147,23 @@ export default function AllOrder() {
                                 </td>
                                 <td>{getDate(order.createdAt)}</td>
 
+                                
                                 <td>
                                   <div className="btn-group mb-1">
-                                    <button
-                                      type="button"
-                                      className="btn btn-outline-success"
-                                      onClick={() => {
-                                        navigate(`/orders/${order.orderId}`)
-                                      }}
-                                    >
-                                      Info
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
-                                      data-bs-toggle="dropdown"
-                                      aria-haspopup="true"
-                                      aria-expanded="false"
-                                      data-display="static"
-                                    >
-                                      <span className="sr-only">Info</span>
-                                    </button>
-
-                                    <div className="dropdown-menu">
-                                      <a className="dropdown-item" href="#">
-                                        Track
-                                      </a>
-                                      <a className="dropdown-item" href="#">
-                                        Cancel
-                                      </a>
-                                    </div>
+                                      <Link to={`/orders/${order.id}`} className="btn btn-primary" >
+                                        Info
+                                      </Link>
+                                      <Link onClick={(e) => {
+                                        e.preventDefault();
+                                        if(window.confirm("Voulez-vous vraiment supprimer cette medication ?")){
+                                          dispatch(deleteOrderAsync(order.id))
+                                            .then(() => {
+                                              dispatch(fetchMedicationsInventoryAsync());
+                                            })
+                                        };
+                                      }} className="btn btn-danger" >
+                                        Supprimer
+                                      </Link>
                                   </div>
                                 </td>
                               </tr>
@@ -165,46 +179,47 @@ export default function AllOrder() {
                       }}
                     >
                       {orders.length > 0 &&
-                        pagination(orders.length, filter.step).map(
-                          (pagination) => (
-                            <button
-                              type="button"
-                              className={
-                                filter.page === pagination
-                                  ? "btn btn-success"
-                                  : "btn btn-outline-success"
-                              }
-                              key={pagination}
-                              onClick={() => {
-                                if (filter.page < pagination) {
-                                  setFilter({
-                                    ...filter,
-                                    start:
-                                      filter.start +
-                                      filter.step * (pagination - filter.page),
-                                    end:
-                                      filter.end +
-                                      filter.step * (pagination - filter.page),
-                                    page: pagination,
-                                  });
-                                } else {
+                        (<nav aria-label="...">
+                        <ul className="pagination">
+                          <li className="page-item ">
+                            <a className="page-link" style={{color: filter.page === 1 ? "gray" : "#34c997"}} onClick={(e) => {
+                                e.preventDefault();
+                                if(filter.page > 1){
                                   setFilter({
                                     ...filter,
                                     start:
                                       filter.start -
-                                      filter.step * (filter.page - pagination),
+                                      filter.step ,
                                     end:
                                       filter.end -
-                                      filter.step * (filter.page - pagination),
-                                    page: pagination,
+                                      filter.step ,
+                                    page: filter.page - 1,
                                   });
                                 }
-                              }}
-                            >
-                              {pagination}
-                            </button>
-                          )
-                        )}
+                               
+                            }}>Précédent</a>
+                          </li>
+                          <li className="page-item">
+                            <a className="page-link " style={{color: filter.page === Math.ceil(orders.length / filter.step) ? "gray" : "#34c997"}} onClick={(e) => {
+                              e.preventDefault();
+                              if(filter.page < Math.ceil(orders.length / filter.step) ){
+                                setFilter({
+                                  ...filter,
+                                  start:
+                                    filter.start +
+                                    filter.step ,
+                                  end:
+                                    filter.end +
+                                    filter.step ,
+                                  page: filter.page + 1,
+                                });
+                              }
+                              
+                            }}>Suivant</a>
+                          </li>
+                        </ul>
+                      </nav>
+                      )}
                     </div>
                   </div>
                 </div>

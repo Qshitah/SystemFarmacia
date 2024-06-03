@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Autosuggest from 'react-autosuggest';
-import { fetchMedicationsAsync } from '../../redux/MedicationSlice';
+import { fetchMedicationsAsync, fetchMedicationsInventoryAsync } from '../../redux/MedicationSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   addSupplierAsync,
   fetchSuppliersAsync,
 } from '../../redux/SupplierSlice';
 import axios from 'axios';
-import { addMultipleSuppliesAsync } from '../../redux/SupplySlice';
+import { addMultipleSuppliesAsync, fetchSuppliesAsync } from '../../redux/SupplySlice';
 
 export default function AddSupplies() {
   const dispatch = useDispatch();
@@ -96,7 +96,7 @@ export default function AddSupplies() {
     onChange: onChange,
   };
 
-  const submitSupplies =  (supplierId) => {
+  const submitSupplies = (supplierId) => {
     const data = formData.map((supply) => {
       return {
         medicationId: supply.medicationId,
@@ -107,16 +107,25 @@ export default function AddSupplies() {
     });
 
     dispatch(addMultipleSuppliesAsync(data))
-        .then(() => {
-            navigate('/medications')
-        })
-        .catch((error) => {
-            setError({
-                error: 'supply',
-                message: 'Error adding supplies',
-            })
+      .then(() => {
+        dispatch(fetchSuppliesAsync());
+        dispatch(fetchMedicationsInventoryAsync())
+          .then(() => {
+            navigate('/suppliers/supplies');
+          })
+      })
+      .catch((error) => {
+        setError({
+          error: 'supply',
+          message: 'Error adding supplies',
         });
-}
+      });
+  };
+
+  const calculateTotal = (array) => {
+    return array.reduce((total, item) => total + item.cost * item.quantity, 0);
+  };
+
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -139,37 +148,36 @@ export default function AddSupplies() {
 
     formData.map((supply, index) => {
       if (supply.quantity <= 0) {
-        error =  ({
-            error: 'supply',
+        error = {
+          error: 'supply',
           message: 'Quantity must be greater than 0',
-        });
+        };
       }
 
       if (supply.cost <= 0) {
-        error =  ({
-         error: 'supply',
+        error = {
+          error: 'supply',
           message: 'Cost must be greater than 0',
-        });
+        };
       }
 
       if (supply.cost > selectedSuggestions[index].price) {
-        error =  ({
+        error = {
           error: 'supply',
           message: 'Cost must be less than or equal to supplier price',
-        });
+        };
       }
     });
 
-    if(error !== null){
-        return setError(error);
+    if (error !== null) {
+      return setError(error);
     }
-
 
     if (selectSuppliers === '') {
       dispatch(addSupplierAsync(supplierInfo))
         .then(async (response) => {
           const supplierId = response.payload.id;
-           submitSupplies(supplierId);
+          submitSupplies(supplierId);
         })
         .catch((error) => {
           return setError({
@@ -177,8 +185,8 @@ export default function AddSupplies() {
             message: 'Failed to add supplier',
           });
         });
-    }else{
-        submitSupplies(selectSuppliers);
+    } else {
+      submitSupplies(selectSuppliers);
     }
   };
 
@@ -468,6 +476,18 @@ export default function AddSupplies() {
                                       </td>
                                     </tr>
                                   ))}
+
+                                <tr>
+                                  <td colSpan="4"></td>
+                                  <td className="text-right">
+                                    <strong>Total</strong>
+                                  </td>
+                                  <td className="text-right">
+                                    <strong>
+                                      {calculateTotal(formData)} Dh
+                                    </strong>
+                                  </td>
+                                </tr>
                               </tbody>
                             </table>
                           </div>
@@ -489,7 +509,14 @@ export default function AddSupplies() {
                       Soumettre
                     </button>
 
-                    <button type="cancel" className="btn btn-danger">
+                    <button
+                      type="cancel"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate('/supplies');
+                      }}
+                      className="btn btn-danger"
+                    >
                       Annuler
                     </button>
                   </div>

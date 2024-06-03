@@ -151,7 +151,7 @@ export default function MedicationsList() {
                                 <td>{medication.reference}</td>
                                 <td>{medication.price}Dh</td>
                                 <td>{medication.dosage}</td>
-                                <td>{medication.expiresAt === null ? "-" : getDate(medication.expiresAt) }</td>
+                                <td >{medication.expiresAt === null ? "-" : getDate(medication.expiresAt) }</td>
                                 <td>
                                   {medication.createdAt === null
                                     ? getDate(new Date())

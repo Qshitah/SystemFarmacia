@@ -1,6 +1,7 @@
 package webcrea.app.pharmacy.service
 
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import webcrea.app.pharmacy.entity.Order
 import webcrea.app.pharmacy.repository.OrderRepository
 
@@ -16,5 +17,11 @@ class OrderService(private val orderRepository: OrderRepository): MainService<Or
         existingData.status = newData.status
         return existingData
     }
+
+    override fun getAllData(): Flux<Order> {
+        return super.getAllData()
+            .sort(compareByDescending { it.createdAt })
+    }
+
 
 }

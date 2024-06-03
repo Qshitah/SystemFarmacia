@@ -25,7 +25,7 @@ const navbar = [
     },
     {
         title: "Inventory",
-        href: "inventory",
+        href: "/inventory",
         icon: "mdi mdi-package",
         subMenu: []
     },
@@ -55,7 +55,7 @@ const navbar = [
             },
             {
                 title: "Supplies list",
-                href: "/supplies",
+                href: "/suppliers/supplies",
             },
             {
                 title: "Add a supplies",

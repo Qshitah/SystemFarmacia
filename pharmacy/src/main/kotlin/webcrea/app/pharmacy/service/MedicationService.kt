@@ -17,6 +17,10 @@ import java.time.LocalDateTime
 @Service
 class MedicationService(private val medicationRepository: MedicationRepository,private val inventoryRepository: InventoryRepository): MainService<Medication,Long>(medicationRepository) {
 
+    override fun getAllData(): Flux<Medication> {
+        return super.getAllData()
+            .sort(compareBy{it.expiresAt})
+    }
 
     override fun saveData(data: Medication): Mono<Medication> {
         return medicationRepository.findByReference(data.reference!!)

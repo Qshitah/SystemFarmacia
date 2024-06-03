@@ -1,8 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { deleteSuppliesAsync } from '../../redux/SupplySlice';
+import { fetchMedicationsInventoryAsync } from '../../redux/MedicationSlice';
 
 export default function Supplies() {
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ export default function Supplies() {
     step: 15,
   });
 
+  const navigate = useNavigate();
   const [supplies, setSupplies] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState({
@@ -40,12 +42,17 @@ export default function Supplies() {
 
   const getDate = (date) => {
     const createdAt = new Date(date);
-
-    const month = createdAt.toLocaleString('default', { month: 'long' });
+    const month = createdAt.toLocaleString("default", { month: "long" });
     const day = createdAt.getDate();
     const year = createdAt.getFullYear();
+    const hours = createdAt.getHours();
+    const minutes = createdAt.getMinutes();
 
-    return `${month} ${day}, ${year}`;
+    // Ajout des zéros devant les chiffres si nécessaire
+    const paddedHours = String(hours).padStart(2, "0");
+    const paddedMinutes = String(minutes).padStart(2, "0");
+
+    return `${month} ${day}, ${year} ${paddedHours}:${paddedMinutes}`;
   };
 
   const pagination = (items, pagination) => {
@@ -154,7 +161,7 @@ export default function Supplies() {
                               <td>{data.medication.reference}</td>
                               <td>{data.supply.quantity}</td>
                               <td>{data.supply.cost}</td>
-                              <td>{data.supply.suppliedAt}</td>
+                              <td>{getDate(data.supply.suppliedAt)}</td>
                               <td>
                                 <Link
                                   onClick={(e) => {
@@ -167,7 +174,8 @@ export default function Supplies() {
                                       dispatch(deleteSuppliesAsync
                                         (data.supply.id),
                                       ).then(() => {
-                                          window.location.reload();
+                                          dispatch(fetchMedicationsInventoryAsync());
+                                          navigate('/inventory');
                                       })
                                     }
                                   }}

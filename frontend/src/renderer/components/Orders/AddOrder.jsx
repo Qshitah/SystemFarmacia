@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Autosuggest from 'react-autosuggest';
-import { fetchMedicationsAsync } from '../../redux/MedicationSlice';
-import { Link, useNavigate } from 'react-router-dom';
 import {
-  addSupplierAsync,
-  fetchSuppliersAsync,
-} from '../../redux/SupplierSlice';
+  fetchMedicationsAsync,
+  fetchMedicationsInventoryAsync,
+} from '../../redux/MedicationSlice';
+import { Link, useNavigate } from 'react-router-dom';
+import { addOrderAsync, fetchOrdersAsync } from '../../redux/OrderSlice';
 import axios from 'axios';
-import { addMultipleSuppliesAsync } from '../../redux/SupplySlice';
 
 export default function AddOrder() {
   const dispatch = useDispatch();
@@ -23,41 +22,36 @@ export default function AddOrder() {
   const [selectedSuggestions, setSelectedSuggestions] = useState([]);
   const [formData, setFormData] = useState([]);
   const [formDataOrder, setFormDataOrder] = useState({
-    clientName:"",
-    clientPhone:'',
-    totalAmount:'',
+    clientName: '',
+    clientPhone: '',
+    totalAmount: '',
+  });
 
-  });   
-
-  const { medications, statusMedications, errorMedications } = useSelector(
+  const { inventory, statusMedications, errorMedications } = useSelector(
     (state) => state.medications,
   );
 
   useEffect(() => {
-    if (statusMedications !== 'succeeded') {
-      dispatch(fetchMedicationsAsync());
-    } else if (statusMedications === 'failed') {
+    if (statusMedications === 'failed-inventory') {
       console.log(errorMedications);
-    }
-
-    if (statusMedications === 'failed-deleteting') {
-      alert(errorMedications);
+    } else if (statusMedications !== 'succeeded-inventory') {
+      dispatch(fetchMedicationsInventoryAsync());
     }
   }, [dispatch, errorMedications, statusMedications]);
-
- 
 
   const getSuggestions = (inputValue) => {
     const inputValueLowerCase = inputValue.trim().toLowerCase();
     return inputValue.length === 0
       ? []
-      : medications.filter((medication) =>
-          medication.reference.toLowerCase().includes(inputValueLowerCase),
+      : inventory.filter((data) =>
+          data.data.reference.toLowerCase().includes(inputValueLowerCase),
         );
   };
 
   // Function to render suggestions
-  const renderSuggestion = (suggestion) => <div>{suggestion.reference}</div>;
+  const renderSuggestion = (suggestion) => (
+    <div>{suggestion.data.reference}</div>
+  );
 
   // Function to handle input change
   const onChange = (event, { newValue }) => {
@@ -70,9 +64,9 @@ export default function AddOrder() {
     setFormData((prevState) => [
       ...prevState,
       {
-        medicationId: suggestion.id,
+        medicationId: suggestion.data.id,
         quantity: 1,
-        price:suggestion.price
+        price: suggestion.data.price,
       },
     ]);
     // Clear the input value
@@ -84,6 +78,89 @@ export default function AddOrder() {
     value,
     onChange: onChange,
   };
+
+  const calculateTotal = (array) => {
+    return array.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError({
+      error: '',
+      message: '',
+    });
+
+    if(formData.length === 0){
+      return setError({
+        error: 'order',
+        message: 'Please add at least one medication',
+      });
+    }
+
+    var error = null;
+
+    formData.map((medication, index) => {
+      if(medication.quantity <= 0){
+        error = {
+          error: 'order',
+          message: 'Quantity must be greater than 0',
+        };
+      }
+
+      if(medication.quantity > selectedSuggestions[index].data.quantity){
+        error = {
+          error: 'order',
+          message: 'Quantity must be less than or equal to available quantity',
+        };
+      }
+
+      if(medication.price <= 0){
+        error = {
+          error: 'order',
+          message: 'Price must be greater than 0',
+        };
+      }
+    });
+
+    if(error){
+      return setError(error);
+    }
+
+    const orderData = {
+      clientName: formDataOrder.clientName,
+      clientPhone: formDataOrder.clientPhone,
+      status: 'Confirmed',
+      totalAmount: calculateTotal(formData),
+      userId: 1
+    };
+    
+    dispatch(addOrderAsync(orderData))
+      .then(async(response) => {
+        const data = formData.map((medication) => {
+          return {
+            orderId: response.payload.id,
+            medicationId: medication.medicationId,
+            quantity: medication.quantity,
+            price: medication.price,
+          };
+        });
+
+        await axios.post('http://localhost:8080/api/orderItems/multiple', data)
+          .then(() => {
+            dispatch(fetchOrdersAsync());
+            dispatch(fetchMedicationsInventoryAsync())
+              .then(() => {
+                navigate('/orders');
+              })
+          }).catch((error) => {
+            console.log(error);
+            window.electron.ipcRenderer.sendMessage('ipc-example', [
+              'Error adding order items data',
+            ]);
+          });
+
+      })
+  }
 
   return (
     <>
@@ -104,12 +181,10 @@ export default function AddOrder() {
                 </p>
               </div>
             </div>
-            {statusMedications === 'succeeded' && (
+            {statusMedications === 'succeeded-inventory' && (
               <div className="ec-cat-form">
-                <form onSubmit={(e) => onSubmit(e)}>
+                <form onSubmit={(e) => handleSubmit(e)}>
                   <div className="form-row">
-                    
-
                     <div className="form-group col-md-4 ">
                       <label htmlFor="contactName">
                         Contact Name <span>(Facultatif)</span>
@@ -140,8 +215,6 @@ export default function AddOrder() {
                       )}
                     </div>
 
-                  
-
                     <div className="form-group col-md-4 ">
                       <label htmlFor="contactPhone">
                         Contact Phone <span>(Facultatif)</span>
@@ -149,7 +222,6 @@ export default function AddOrder() {
                       <input
                         type="text"
                         id="contactPhone"
-                        
                         value={formDataOrder.clientPhone}
                         onChange={(event) =>
                           setFormDataOrder({
@@ -194,7 +266,7 @@ export default function AddOrder() {
                         onSuggestionSelected={onSuggestionSelected}
                       />
                     </div>
-                    {error.error === 'supply' && (
+                    {error.error === 'order' && (
                       <div
                         className="invalid-feedback"
                         style={{
@@ -220,8 +292,8 @@ export default function AddOrder() {
                               <thead>
                                 <tr>
                                   <th>Reference</th>
-                                  <th>Prix</th>
                                   <th>Quantité</th>
+                                  <th>Prix</th>
                                   <th>Stock</th>
                                   <th>Cost total (Dh)</th>
                                   <th>Action</th>
@@ -231,9 +303,9 @@ export default function AddOrder() {
                               <tbody>
                                 {selectedSuggestions.length > 0 &&
                                   selectedSuggestions.map((suggestion, i) => (
-                                    <tr key={suggestion.id}>
-                                      <td>{suggestion.reference}</td>
-                                      
+                                    <tr key={suggestion.data.id}>
+                                      <td>{suggestion.data.reference}</td>
+
                                       <td style={{ width: '100px' }}>
                                         <input
                                           type="number"
@@ -254,31 +326,35 @@ export default function AddOrder() {
                                         <input
                                           type="number"
                                           value={formData[i].price}
-                                          placeholder={suggestion.price}
-                                          name="cost"
+                                          placeholder={suggestion.data.price}
+                                          name="price"
                                           onChange={(e) => {
                                             setFormData((prevState) => {
                                               const newState = [...prevState];
-                                              newState[i].cost = e.target.value;
+                                              newState[i].price =
+                                                e.target.value;
                                               return newState;
                                             });
                                           }}
                                         />
                                       </td>
                                       <td>
-                                      <p
+                                        <p
                                           style={{
                                             color:
-                                              getStock(select, i) <= 10
-                                                ? "red"
-                                                : "",
+                                              suggestion.inventory.quantity <=
+                                              10
+                                                ? 'red'
+                                                : '',
                                           }}
                                         >
-                                          {getStock(select, i)}
+                                          {suggestion.inventory.quantity}
                                         </p>
                                       </td>
-                                      <td>{formData[i].cost *
-                                          formData[i].quantity}</td>
+                                      <td>
+                                        {formData[i].price *
+                                          formData[i].quantity}
+                                      </td>
                                       <td>
                                         <button
                                           type="button"
@@ -301,6 +377,18 @@ export default function AddOrder() {
                                       </td>
                                     </tr>
                                   ))}
+
+                                <tr>
+                                  <td colSpan="4"></td>
+                                  <td className="text-right">
+                                    <strong>Total</strong>
+                                  </td>
+                                  <td className="text-right">
+                                    <strong>
+                                      {calculateTotal(formData)} Dh
+                                    </strong>
+                                  </td>
+                                </tr>
                               </tbody>
                             </table>
                           </div>
