@@ -21843,13 +21843,13 @@ div.copied {
 
 /* Sidebar Light */
 .ec-sidebar-light .ec-left-sidebar {
-  background-color: #ffffff;
+  background-color: #E0FBE2;
 }
 .ec-sidebar-light .sidebar {
   border-right: 1px solid #f3f3f3;
 }
 .ec-sidebar-light .sidebar .sub-menu {
-  background-color: #f7f7f7;
+  background-color: #E0FBE2;
 }
 .ec-sidebar-light .sidebar .sub-menu > li > a {
   color: #8a909d;
