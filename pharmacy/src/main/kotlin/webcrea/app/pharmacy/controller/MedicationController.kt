@@ -18,4 +18,9 @@ class MedicationController(private val medicationService: MedicationService): Ma
         return medicationService.getAllDataDTO()
     }
 
+    @GetMapping("/expired-medications")
+    fun getExpiredMedications(): Flux<Medication> {
+        return medicationService.getExpiredMedications()
+    }
+
 }

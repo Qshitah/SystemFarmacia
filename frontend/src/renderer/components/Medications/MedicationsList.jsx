@@ -63,7 +63,11 @@ export default function MedicationsList() {
         <div className="content">
           <div className="breadcrumb-wrapper d-flex align-items-center justify-content-between">
             <div>
-              <h1>Medication</h1>
+            {statusMedications === "succeeded" ? (
+                  <h1>List of Medications ({medications.length})</h1>
+                ): (
+                  <h1>List of Medications</h1>
+                )}
               <p className="breadcrumbs">
                 <span>
                   <Link to={"/"}>Accueil</Link>
@@ -71,7 +75,7 @@ export default function MedicationsList() {
                 <span>
                   <i className="mdi mdi-chevron-right"></i>
                 </span>
-                Medication
+                <span>Medication</span>
               </p>
             </div>
             <div style={{ display: "flex", gap: "10px" }}>

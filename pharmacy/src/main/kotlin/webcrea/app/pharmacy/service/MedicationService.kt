@@ -12,6 +12,7 @@ import webcrea.app.pharmacy.exception.MedicationExceptionExist
 import webcrea.app.pharmacy.repository.InventoryRepository
 import webcrea.app.pharmacy.repository.MedicationRepository
 import webcrea.app.pharmacy.repository.SupplierRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -43,6 +44,12 @@ class MedicationService(private val medicationRepository: MedicationRepository,p
                     }
             }
     }
+
+    fun getExpiredMedications(): Flux<Medication> {
+        val currentDate = LocalDate.now()
+        return medicationRepository.findExpiredMedications(currentDate)
+    }
+
 
 
     override fun mergeData(existingData: Medication, newData: Medication): Medication {
