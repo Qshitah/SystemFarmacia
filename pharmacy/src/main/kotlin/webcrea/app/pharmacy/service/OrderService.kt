@@ -3,6 +3,7 @@ package webcrea.app.pharmacy.service
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import webcrea.app.pharmacy.DTO.MonthlyTotal
 import webcrea.app.pharmacy.entity.Order
 import webcrea.app.pharmacy.repository.OrderRepository
 
@@ -27,6 +28,11 @@ class OrderService(private val orderRepository: OrderRepository): MainService<Or
     fun getTotalAmountForMonthAndYear(month: Int, year: Int): Mono<Double> {
         return orderRepository.calculateTotalAmount(month, year)
             .switchIfEmpty(Mono.just(0.0))
+    }
+
+
+    fun getTotalAmountByMonthYear(): Flux<MonthlyTotal> {
+        return orderRepository.findTotalAmountByMonthYear()
     }
 
 

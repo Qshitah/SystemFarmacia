@@ -96,7 +96,7 @@ export default function EditMedication() {
                         message: errorMedications
                     })
                 }else{
-                    navigate("/medications");
+                    navigate("/medicaments");
                 }
             })
 	}
@@ -105,12 +105,12 @@ export default function EditMedication() {
 				<div className="content">
 					<div className="breadcrumb-wrapper d-flex align-items-center justify-content-between">
 						<div>
-							<h1>Edit Medication</h1>
-							<p className="breadcrumbs"><span><Link to={"/"}>Home</Link></span>
-								<span><i className="mdi mdi-chevron-right"></i></span>Product</p>
+							<h1>Editer un médicament</h1>
+							<p className="breadcrumbs"><span><Link to={"/"}>Accueil</Link></span>
+								<span><i className="mdi mdi-chevron-right"></i></span>Médicament</p>
 						</div>
 						<div>
-							<Link to={"/medications"} className="btn btn-primary"> View All
+							<Link to={"/medications"} className="btn btn-primary"> Liste des médicaments
 							</Link>
 						</div>
 					</div>
@@ -118,7 +118,7 @@ export default function EditMedication() {
 						<div className="col-12">
 							<div className="card card-default">
 								<div className="card-header card-header-border-bottom">
-									<h2>Edit Medication</h2>
+									<h2>Editer un médicament</h2>
 								</div>
 
 								<div className="card-body">
@@ -127,30 +127,30 @@ export default function EditMedication() {
 											<div className="ec-vendor-upload-detail">
 												<form className="row g-3">
 													<div className="col-md-6">
-														<label htmlFor="name" className="form-label">Name</label>
+														<label htmlFor="name" className="form-label">Nom</label>
 														<input type="text" className="form-control" placeholder='Medication Name' onChange={(e) => handleMedicationChange(e)} name='name' value={formData.medication.name} id="name"/>
 														{error.name === "name" && <p className="text-danger">{error.message}</p>}
 													</div>
 													<div className="col-md-6">
-														<label htmlFor="reference" className="form-label">Reference</label> 
+														<label htmlFor="reference" className="form-label">Référence</label> 
 														{error.name === "reference" && <p className="text-danger" style={{color:"red"}}>{error.message}</p>}
 														<input id="reference" name="reference" placeholder='Medication Reference' className="form-control" onChange={(e) => handleMedicationChange(e)} value={formData.medication.reference} type="text"/>
 													</div>
 													<div className="col-md-12">
-														<label className="form-label">Sort Description <span>(Optional)</span></label>
+														<label className="form-label"> Description <span>(Facultatif)</span></label>
 														<textarea className="form-control" rows="2" placeholder='Medication Description' name='description' onChange={(e) => handleMedicationChange(e)} value={formData.medication.descritpion}></textarea>
 													</div>
 													<div className="col-md-6">
-														<label className="form-label">Price <span>( In MAD )</span></label>
+														<label className="form-label">Prix <span>( MAD )</span></label>
 														{error.name === "price" && <p className="text-danger" style={{color:"red"}}>{error.message}</p>}
 														<input type="number" className="form-control" min={0} placeholder='Medication Price' name='price' id="price" onChange={(e) => handleMedicationChange(e)} value={formData.medication.price}/>
 													</div>
 													<div className="col-md-6">
 														<label className="form-label">Dosage</label>
-														<input type="text" placeholder='For Example: 200mg' className="form-control" name='dosage' id="dosage" onChange={(e) => handleMedicationChange(e)} value={formData.medication.dosage}/>
+														<input type="text" placeholder='Par Example: 200mg' className="form-control" name='dosage' id="dosage" onChange={(e) => handleMedicationChange(e)} value={formData.medication.dosage}/>
 													</div>
 													<div className="col-md-6">
-														<label className="form-label">Expires At</label>
+														<label className="form-label">Expire à</label>
 														<input type="date" className="form-control" name='expiresAt' id="expiresAt" onChange={(e) => handleMedicationChange(e)} value={formData.medication.expiresAt}/>
 													</div>
 												</form>

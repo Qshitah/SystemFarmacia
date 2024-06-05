@@ -64,9 +64,9 @@ export default function MedicationsList() {
           <div className="breadcrumb-wrapper d-flex align-items-center justify-content-between">
             <div>
             {statusMedications === "succeeded" ? (
-                  <h1>List of Medications ({medications.length})</h1>
+                  <h1>Liste des Médicaments ({medications.length})</h1>
                 ): (
-                  <h1>List of Medications</h1>
+                  <h1>Liste des Médicaments</h1>
                 )}
               <p className="breadcrumbs">
                 <span>
@@ -75,14 +75,14 @@ export default function MedicationsList() {
                 <span>
                   <i className="mdi mdi-chevron-right"></i>
                 </span>
-                <span>Medication</span>
+                <span>Médicament</span>
               </p>
             </div>
             <div style={{ display: "flex", gap: "10px" }}>
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search By Name"
+                placeholder="Rechercher par Nom"
                 value={searchTerm.name}
                 onChange={(e) =>
                   setSearchTerm({ ...searchTerm, name: e.target.value })
@@ -91,7 +91,7 @@ export default function MedicationsList() {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search By Reference"
+                placeholder="Rechercher par Référence"
                 value={searchTerm.reference}
                 onChange={(e) =>
                   setSearchTerm({ ...searchTerm, reference: e.target.value })
@@ -155,7 +155,7 @@ export default function MedicationsList() {
                                 <td>{medication.reference}</td>
                                 <td>{medication.price}Dh</td>
                                 <td>{medication.dosage}</td>
-                                <td >{medication.expiresAt === null ? "-" : getDate(medication.expiresAt) }</td>
+                                <td style={{color : getDate(new Date()) > getDate(medication.expiresAt) ? "green" : "red"}}>{medication.expiresAt === null ? "-" : getDate(medication.expiresAt) }</td>
                                 <td>
                                   {medication.createdAt === null
                                     ? getDate(new Date())

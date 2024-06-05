@@ -69,7 +69,7 @@ export default function Supplies() {
       <div className="content">
         <div className="breadcrumb-wrapper d-flex align-items-center justify-content-between">
           <div>
-            <h1>Supplies</h1>
+            <h1>Fournitures</h1>
             <p className="breadcrumbs">
               <span>
                 <Link to={'/'}>Accueil</Link>
@@ -77,14 +77,14 @@ export default function Supplies() {
               <span>
                 <i className="mdi mdi-chevron-right"></i>
               </span>
-              Supplies
+              Fournitures
             </p>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <input
               type="text"
               className="form-control"
-              placeholder="Search By Supplier Name"
+              placeholder="Rechercher par Fournisage Nom"
               value={searchTerm.name}
               onChange={(e) =>
                 setSearchTerm({ ...searchTerm, name: e.target.value })
@@ -93,7 +93,7 @@ export default function Supplies() {
              <input
               type="text"
               className="form-control"
-              placeholder="Search By Reference"
+              placeholder="Rechercher par Référence"
               value={searchTerm.reference}
               onChange={(e) =>
                 setSearchTerm({ ...searchTerm, reference: e.target.value })
@@ -121,11 +121,11 @@ export default function Supplies() {
                   >
                     <thead>
                       <tr>
-                        <th>Entreprise Name</th>
-                        <th>Reference</th>
-                        <th>Quantity</th>
-                        <th>Cost</th>
-                        <th>Supplied At</th>
+                        <th>Entreprise Nom</th>
+                        <th>Référence</th>
+                        <th>Quantité</th>
+                        <th>Cout</th>
+                        <th>Fourni à</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -175,7 +175,7 @@ export default function Supplies() {
                                         (data.supply.id),
                                       ).then(() => {
                                           dispatch(fetchMedicationsInventoryAsync());
-                                          navigate('/inventory');
+                                          navigate('/inventaire');
                                       })
                                     }
                                   }}

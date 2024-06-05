@@ -60,7 +60,7 @@ export default function Suppliers() {
       <div className="content">
         <div className="breadcrumb-wrapper d-flex align-items-center justify-content-between">
           <div>
-            <h1>Suppliers</h1>
+            <h1>Fournisseurs</h1>
             <p className="breadcrumbs">
               <span>
                 <Link to={"/"}>Accueil</Link>
@@ -68,14 +68,14 @@ export default function Suppliers() {
               <span>
                 <i className="mdi mdi-chevron-right"></i>
               </span>
-              Suppliers
+              Fournisseurs
             </p>
           </div>
           <div style={{ display: "flex", gap: "10px" }}>
             <input
               type="text"
               className="form-control"
-              placeholder="Search By Supplier Name"
+              placeholder="Rechercher par nom de fournisseur"
               value={searchTerm.name}
               onChange={(e) =>
                 setSearchTerm({ ...searchTerm, name: e.target.value })
@@ -96,10 +96,10 @@ export default function Suppliers() {
                     <thead>
                   
                       <tr>
-                        <th>Entreprise Name</th>
-                        <th>Contact Name</th>
+                        <th>Entreprise Nom</th>
+                        <th>Contact Nom</th>
                         <th>Contact Email</th>
-                        <th>Contact Phone</th>
+                        <th>Contact Telephone</th>
                         <th>Créé à</th>
                         <th>Action</th>
                       </tr>

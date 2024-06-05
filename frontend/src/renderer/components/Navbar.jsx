@@ -3,63 +3,63 @@ import { Link, useLocation } from 'react-router-dom';
 
 const navbar = [
     {
-        title: "Dashboard",
+        title: "Tableau de Bord",
         href: "/",
         icon: "mdi mdi-view-dashboard-outline",
         subMenu: []
     },
     {
-        title: "Medications",
+        title: "Medicaments",
         href: null,
         icon: "mdi mdi-shopping",
         subMenu: [
             {
-                title: "Medications list",
-                href: "/medications",
+                title: "Liste des médicaments",
+                href: "/medicaments",
             },
             {
-                title: "Add a Medication",
-                href: "/medications/add",
+                title: "Ajouter un médicament",
+                href: "/medicaments/add",
             }
         ]
     },
     {
-        title: "Inventory",
-        href: "/inventory",
+        title: "Inventaire",
+        href: "/Inventaire",
         icon: "mdi mdi-package",
         subMenu: []
     },
     {
-        title: "Orders",
+        title: "Commandes",
         href: null,
         icon: "mdi mdi-cart",
         subMenu: [
             {
-                title: "Orders list",
-                href: "/orders",
+                title: "Liste des commandes",
+                href: "/commandes",
             },
             {
-                title: "Add an order",
-                href: "/orders/add",
+                title: "Ajouter une commande",
+                href: "/commandes/add",
             }
         ]
     },
     {
-        title: "Suppliers",
+        title: "Fournisseurs",
         href: null,
         icon: "mdi mdi-package",
         subMenu: [
             {
-                title: "Suppliers List",
-                href: "/suppliers",
+                title: "Fournisseurs List",
+                href: "/fournisseurs",
             },
             {
-                title: "Supplies list",
-                href: "/suppliers/supplies",
+                title: "Liste des fournitures",
+                href: "/fournisseurs/fournitures",
             },
             {
-                title: "Add a supplies",
-                href: "/suppliers/add",
+                title: "Ajouter une fourniture",
+                href: "/fournisseurs/add",
             }
         ]
     }

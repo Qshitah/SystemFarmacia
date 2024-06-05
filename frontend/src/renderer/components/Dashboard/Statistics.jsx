@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMedicationsAsync } from '../../redux/MedicationSlice';
+import { useNavigate } from 'react-router';
 
 export default function Statistics() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [date, setDate] = useState(
     new Date().toISOString().split('T')[0].substring(0, 7),
@@ -18,7 +20,7 @@ export default function Statistics() {
 
   const [expiredMedications, setExpiredMedications] = useState([]);
 
-  const [checkInventory, setCheckInventory] = useState("Good");
+  const [checkInventory, setCheckInventory] = useState("");
 
   const [total, setTotal] = useState(0);
 
@@ -86,13 +88,15 @@ export default function Statistics() {
           >
             <div
               className="mdi mdi-security"
-              style={{ fontSize: '60px', textAlign: 'center', color: checkInventory === "Good" ? "green" : "red" }}
+              style={{ fontSize: '60px', textAlign: 'center', color: checkInventory === "Bien" ? "green" : checkInventory === "" ? "black" : "red" }}
             ></div>
             <div style={{ textAlign: 'center' }}>
-              <h2 className="mb-1" style={{ color: checkInventory === "Good" ? "green" : "red" }}>
+              <h2 className="mb-1" onClick={() => {
+                navigate('/inventaire')
+              }}  style={{ color: checkInventory === "Bien" ? "green" : checkInventory === "" ? "black" : "red", cursor: 'pointer' }}>
                 {checkInventory}
               </h2>
-              <p>Inventory Status</p>
+              <p>Statut de l'inventaire</p>
             </div>
           </div>
         </div>
@@ -116,7 +120,7 @@ export default function Statistics() {
               <h2 className="mb-1" style={{ color: 'black' }}>
                 {medications.length}
               </h2>
-              <p>Medications Available</p>
+              <p>Médicaments Disponibles</p>
             </div>
           </div>
         </div>
@@ -141,7 +145,7 @@ export default function Statistics() {
                 {total} Dh
               </h2>
               <div style={{   display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
-                <p>Revenue:</p>
+                <p>Revenu:</p>
 
                 <input
                   type="month"
@@ -168,13 +172,13 @@ export default function Statistics() {
           >
             <div
               className="mdi mdi-alert"
-              style={{ fontSize: '60px', textAlign: 'center' }}
+              style={{ fontSize: '60px', textAlign: 'center', color: 'red' }}
             ></div>
             <div style={{ textAlign: 'center' }}>
               <h2 className="mb-1" style={{ color: 'black' }}>
                 {expiredMedications.length}
               </h2>
-              <p>Expired Medications</p>
+              <p>Médicaments Expirés</p>
             </div>
           </div>
         </div>

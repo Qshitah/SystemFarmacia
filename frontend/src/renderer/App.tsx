@@ -38,16 +38,16 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} key="home">
               <Route index element={<Dashboard />} key="home" />
-              <Route path="medications" element={<MedicationsList />} key="medications" />
-              <Route path="medications/add" element={<AddMedication />} key="add-medication" />
-              <Route path="medications/edit/:id" element={<EditMedication />} key="edit-medication" />
-              <Route path='inventory' element={<Inventory />} key="inventory" />
-              <Route path='suppliers' element={<Suppliers />} key="suppliers" />
-              <Route path='suppliers/add' element={<AddSupplies />} key="addSupplies" />
-              <Route path='suppliers/supplies' element={<Supplies />} key="supplies" />
-              <Route path='orders' element={<AllOrder />} key="orders" />
-              <Route path='orders/add' element={<AddOrder />} key="orders/add" />
-              <Route path='orders/:id' element={<OrderDetail />} key="orders/id" />
+              <Route path="medicaments" element={<MedicationsList />} key="medicaments" />
+              <Route path="medicaments/add" element={<AddMedication />} key="add-medicament" />
+              <Route path="medicaments/edit/:id" element={<EditMedication />} key="edit-medicament" />
+              <Route path='inventaire' element={<Inventory />} key="inventaire" />
+              <Route path='fournisseurs' element={<Suppliers />} key="fournisseurs" />
+              <Route path='fournisseurs/add' element={<AddSupplies />} key="addfournisseurs" />
+              <Route path='fournisseurs/fournitures' element={<Supplies />} key="fournitures" />
+              <Route path='commandes' element={<AllOrder />} key="commandes" />
+              <Route path='commandes/add' element={<AddOrder />} key="commandes/add" />
+              <Route path='commandes/:id' element={<OrderDetail />} key="commandes/id" />
             </Route>
           </Routes>
         </Router>

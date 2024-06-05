@@ -13,9 +13,9 @@ class InventoryService(private val inventoryRepository: InventoryRepository): Ma
             .collectList()
             .flatMap { items ->
                 if (items.isEmpty()) {
-                    Mono.just("Good")
+                    Mono.just("Bien")
                 } else {
-                    Mono.just("Be Careful")
+                    Mono.just("Sois Prudent")
                 }
             }
     }

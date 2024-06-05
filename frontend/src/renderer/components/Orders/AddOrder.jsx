@@ -74,7 +74,7 @@ export default function AddOrder() {
   };
   // Autosuggest input properties
   const inputProps = {
-    placeholder: 'Type a reference of product',
+    placeholder: 'Tapez une référence de médicament',
     value,
     onChange: onChange,
   };
@@ -93,7 +93,7 @@ export default function AddOrder() {
     if(formData.length === 0){
       return setError({
         error: 'order',
-        message: 'Please add at least one medication',
+        message: 'Veuillez ajouter au moins un médicament',
       });
     }
 
@@ -103,21 +103,22 @@ export default function AddOrder() {
       if(medication.quantity <= 0){
         error = {
           error: 'order',
-          message: 'Quantity must be greater than 0',
+          message: 'La quantité doit être supérieure à 0',
         };
       }
 
-      if(medication.quantity > selectedSuggestions[index].data.quantity){
+
+      if(medication.quantity > selectedSuggestions[index].inventory.quantity){
         error = {
           error: 'order',
-          message: 'Quantity must be less than or equal to available quantity',
+          message: 'La quantité doit être inférieure ou égale à la quantité disponible',
         };
       }
 
       if(medication.price <= 0){
         error = {
           error: 'order',
-          message: 'Price must be greater than 0',
+          message: 'Le prix doit être supérieur à 0',
         };
       }
     });
@@ -150,7 +151,7 @@ export default function AddOrder() {
             dispatch(fetchOrdersAsync());
             dispatch(fetchMedicationsInventoryAsync())
               .then(() => {
-                navigate('/orders');
+                navigate('/commandes');
               })
           }).catch((error) => {
             console.log(error);
@@ -187,7 +188,7 @@ export default function AddOrder() {
                   <div className="form-row">
                     <div className="form-group col-md-4 ">
                       <label htmlFor="contactName">
-                        Contact Name <span>(Facultatif)</span>
+                        Nom du Contact <span>(Facultatif)</span>
                       </label>
                       <input
                         type="text"
@@ -217,7 +218,7 @@ export default function AddOrder() {
 
                     <div className="form-group col-md-4 ">
                       <label htmlFor="contactPhone">
-                        Contact Phone <span>(Facultatif)</span>
+                        Numéro du contact <span>(Facultatif)</span>
                       </label>
                       <input
                         type="text"
@@ -251,7 +252,7 @@ export default function AddOrder() {
                       htmlFor="productName"
                       className="col-12 col-form-label"
                     >
-                      Reference Medication
+                      Référence de la médicament
                     </label>
                     <div className="col-12">
                       <Autosuggest
@@ -295,7 +296,7 @@ export default function AddOrder() {
                                   <th>Quantité</th>
                                   <th>Prix</th>
                                   <th>Stock</th>
-                                  <th>Cost total (Dh)</th>
+                                  <th>Prix total (Dh)</th>
                                   <th>Action</th>
                                 </tr>
                               </thead>

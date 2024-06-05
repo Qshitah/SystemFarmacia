@@ -91,7 +91,7 @@ export default function AddSupplies() {
   };
   // Autosuggest input properties
   const inputProps = {
-    placeholder: 'Type a reference of product',
+    placeholder: 'Tapez une référence de médicament',
     value,
     onChange: onChange,
   };
@@ -111,7 +111,7 @@ export default function AddSupplies() {
         dispatch(fetchSuppliesAsync());
         dispatch(fetchMedicationsInventoryAsync())
           .then(() => {
-            navigate('/suppliers/supplies');
+            navigate('/fournisseurs/fournitures');
           })
       })
       .catch((error) => {
@@ -133,14 +133,14 @@ export default function AddSupplies() {
     if (formData.length === 0) {
       return setError({
         error: 'supply',
-        message: 'Please add at least one supply',
+        message: 'Veuillez ajouter au moins une fourniture',
       });
     }
 
     if (supplierInfo.name === '') {
       return setError({
         error: 'name',
-        message: 'Please enter name of a supplier',
+        message: 'Veuillez entrer le nom d\'un fournisseur',
       });
     }
 
@@ -150,21 +150,21 @@ export default function AddSupplies() {
       if (supply.quantity <= 0) {
         error = {
           error: 'supply',
-          message: 'Quantity must be greater than 0',
+          message: 'La quantité doit être supérieure à 0',
         };
       }
 
       if (supply.cost <= 0) {
         error = {
           error: 'supply',
-          message: 'Cost must be greater than 0',
+          message: 'Le coût doit être supérieur à 0',
         };
       }
 
       if (supply.cost > selectedSuggestions[index].price) {
         error = {
           error: 'supply',
-          message: 'Cost must be less than or equal to supplier price',
+          message: 'Le coût doit être inférieur ou égal au prix du fournisseur',
         };
       }
     });
@@ -182,7 +182,7 @@ export default function AddSupplies() {
         .catch((error) => {
           return setError({
             error: 'supply',
-            message: 'Failed to add supplier',
+            message: 'Échec de l\'ajout du fournisseur',
           });
         });
     } else {
@@ -197,7 +197,7 @@ export default function AddSupplies() {
           <div className="content">
             <div className="breadcrumb-wrapper d-flex align-items-center justify-content-between">
               <div>
-                <h1>Ajouter une nouvelle supply</h1>
+                <h1>Ajouter une nouvelle fourniture</h1>
                 <p className="breadcrumbs">
                   <span>
                     <Link to={'/'}>Accueil</Link>
@@ -205,7 +205,7 @@ export default function AddSupplies() {
                   <span>
                     <i className="mdi mdi-chevron-right"></i>
                   </span>
-                  Ajouter une supply
+                  Ajouter une fourniture
                 </p>
               </div>
             </div>
@@ -214,7 +214,7 @@ export default function AddSupplies() {
                 <form onSubmit={(e) => onSubmit(e)}>
                   <div className="form-row">
                     <div className="form-group col-md-4 ">
-                      <label htmlFor="supplier">Select a supplier</label>
+                      <label htmlFor="supplier">Sélectionnez un fournisseur</label>
                       <select
                         name="supplier"
                         className="form-control"
@@ -231,7 +231,7 @@ export default function AddSupplies() {
                         }}
                         id="supplier"
                       >
-                        <option value={''}>Select a supplier</option>
+                        <option value={''}>Sélectionnez un fournisseur</option>
                         {Suppliers.length > 0 &&
                           Suppliers.map((supplier) => (
                             <option value={supplier.id}>{supplier.name}</option>
@@ -239,7 +239,7 @@ export default function AddSupplies() {
                       </select>
                     </div>
                     <div className="form-group col-md-4 ">
-                      <label htmlFor="customer_name">Name Entreprise</label>
+                      <label htmlFor="customer_name">Nom de l'Entreprise</label>
                       <input
                         type="text"
                         id="name"
@@ -269,7 +269,7 @@ export default function AddSupplies() {
 
                     <div className="form-group col-md-4 ">
                       <label htmlFor="contactName">
-                        Contact Name <span>(Facultatif)</span>
+                        Contact Nom <span>(Facultatif)</span>
                       </label>
                       <input
                         type="text"
@@ -331,7 +331,7 @@ export default function AddSupplies() {
 
                     <div className="form-group col-md-4 ">
                       <label htmlFor="contactPhone">
-                        Contact Phone <span>(Facultatif)</span>
+                        Contact Telephone <span>(Facultatif)</span>
                       </label>
                       <input
                         type="text"
@@ -366,7 +366,7 @@ export default function AddSupplies() {
                       htmlFor="productName"
                       className="col-12 col-form-label"
                     >
-                      Reference Medication
+                      Référence Médicament
                     </label>
                     <div className="col-12">
                       <Autosuggest
@@ -406,11 +406,11 @@ export default function AddSupplies() {
                             >
                               <thead>
                                 <tr>
-                                  <th>Reference</th>
-                                  <th>Price</th>
+                                  <th>Référence</th>
+                                  <th>Prix</th>
                                   <th>Quantité</th>
-                                  <th>Cost</th>
-                                  <th>Cost total (Dh)</th>
+                                  <th>Cout</th>
+                                  <th>Cout Total (Dh)</th>
                                   <th>Action</th>
                                 </tr>
                               </thead>
@@ -513,7 +513,7 @@ export default function AddSupplies() {
                       type="cancel"
                       onClick={(e) => {
                         e.preventDefault();
-                        navigate('/supplies');
+                        navigate('/fournisseurs/fournitures');
                       }}
                       className="btn btn-danger"
                     >

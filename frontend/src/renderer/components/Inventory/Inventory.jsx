@@ -60,7 +60,7 @@ export default function Inventory() {
         <div className="content">
           <div className="breadcrumb-wrapper d-flex align-items-center justify-content-between">
             <div>
-              <h1>Inventory</h1>
+              <h1>Inventaire</h1>
               <p className="breadcrumbs">
                 <span>
                   <Link to={"/"}>Accueil</Link>
@@ -68,14 +68,14 @@ export default function Inventory() {
                 <span>
                   <i className="mdi mdi-chevron-right"></i>
                 </span>
-                Inventory
+                Inventaire
               </p>
             </div>
             <div style={{ display: "flex", gap: "10px" }}>
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search By Name"
+                placeholder="Rechercher par nom"
                 value={searchTerm.name}
                 onChange={(e) =>
                   setSearchTerm({ ...searchTerm, name: e.target.value })
@@ -84,7 +84,7 @@ export default function Inventory() {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search By Reference"
+                placeholder="Rechercher par référence"
                 value={searchTerm.reference}
                 onChange={(e) =>
                   setSearchTerm({ ...searchTerm, reference: e.target.value })
